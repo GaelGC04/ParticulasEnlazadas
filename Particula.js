@@ -1,11 +1,13 @@
 class Particula {
     // Se contruye la particula con estos parámetros
-    constructor(x, y, tamanio, color, velocidad, tiempoVida=(100 + Math.random() * 500)) {
+    constructor(x, y, tamanio, color, velocidad, friccion, fuerzaRepulsion, tiempoVida=(100 + Math.random() * 500)) {
         this.x = x;
         this.y = y;
         this.tamanio = tamanio;
         this.color = color;
         this.velocidad = velocidad;
+        this.friccion = friccion;
+        this.fuerzaRepulsion = fuerzaRepulsion;
         this.tiempoVida = tiempoVida;
     }
 
@@ -26,10 +28,10 @@ class Particula {
 
         // Se aplica fricción solo si es mayor a la velocidad máxima para regular la velocidad
         if (this.velocidad.x > velocidadMaxima || this.velocidad.x < -velocidadMaxima) {
-            this.velocidad.x *= 0.95;
+            this.velocidad.x *= this.friccion;
         }
         if (this.velocidad.y > velocidadMaxima || this.velocidad.y < -velocidadMaxima) {
-            this.velocidad.y *= 0.95;
+            this.velocidad.y *= this.friccion;
         }
         
         // Se hace la interacción con el mouse si está activo
@@ -44,10 +46,10 @@ class Particula {
                         x: dx / distancia,
                         y: dy / distancia
                     };
-                    const force = (distanciaMouse - distancia) / 50;
+                    const fuerza = (distanciaMouse - distancia) / (50 / (this.fuerzaRepulsion));
                     
-                    this.velocidad.x += direccionFuerza.x * force;
-                    this.velocidad.y += direccionFuerza.y * force;
+                    this.velocidad.x += direccionFuerza.x * fuerza;
+                    this.velocidad.y += direccionFuerza.y * fuerza;
                 }
             }
         }

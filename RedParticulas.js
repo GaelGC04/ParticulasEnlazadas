@@ -1,8 +1,7 @@
 import Particula from './Particula.js';
 
-// hacer que las particulas se generen en las esquinas y no en el centro
 class RedParticulas {
-    constructor(contenedor, velocidadMaxima, nParticulas, crearParticulaOnClick, mouseActivo, mouseParticula, distanciaMouse, distanciaMaximaConexiones, distanciaMouseConexiones, anchoLinea, colorFondo, colorConexiones, tamanioParticulas, tamanioMinimoParticulas, colores) {
+    constructor(contenedor, velocidadMaxima, nParticulas, generarParticulasFuera, crearParticulaOnClick, mouseActivo, mouseParticula, distanciaMouse, distanciaMaximaConexiones, distanciaMouseConexiones, anchoLinea, colorFondo, colorConexiones, tamanioParticulas, friccion, fuerzaRepulsion, tamanioMinimoParticulas, colores) {
         this.contenedor = contenedor;
         this.contexto = contenedor.getContext('2d'); // Se da que hay un contexto de graficos 2D
         
@@ -26,7 +25,10 @@ class RedParticulas {
         this.tamanioMinimoParticula = tamanioMinimoParticulas; // Tamaño mínimo de las partículas
 
         this.velocidadMaxima = velocidadMaxima; // Velocidad máxima de las partículas
+        this.friccion = friccion; // Fricción de las partículas
+        this.fuerzaRepulsion = fuerzaRepulsion; // Fuerza de repulsión del mouse
         this.nParticulas = nParticulas; // Número de partículas iniciales
+        this.generarParticulasFuera = generarParticulasFuera; // Generar partículas fuera del canvas
 
         this.setup();
         this.animar();
@@ -66,8 +68,8 @@ class RedParticulas {
             x: (Math.random() - 0.5) * this.velocidadMaxima * 2,
             y: (Math.random() - 0.5) * this.velocidadMaxima * 2
         };
-        
-        this.particulas.push(new Particula(x, y, tamanio, color, velocidad));
+
+        this.particulas.push(new Particula(x, y, tamanio, color, velocidad, this.friccion, this.fuerzaRepulsion));
     }
 
     animar() {
@@ -98,28 +100,32 @@ class RedParticulas {
                 this.particulas[iteradorParticulas].y > this.contenedor.offsetTop + this.contenedor.height + this.distanciaMaximaConexiones/2) {
                 this.particulas.splice(iteradorParticulas, 1);
 
-                if (this.particulas.length < this.nParticulas) {
-                    iteradorParticulas--;
-                    const lado_generado = Math.random() < 0.5 ? 'x' : 'y';
-                    let x_lado, y_lado, nuevo_x, nuevo_y;
-                    if (lado_generado === 'x') {
-                        x_lado = Math.random() < 0.5 ? 'r' : 'l';
-                        if (x_lado === 'l') {
-                            nuevo_x = this.contenedor.offsetLeft - this.distanciaMaximaConexiones/3;
+                if (this.generarParticulasFuera == true) {
+                    if (this.particulas.length < this.nParticulas) {
+                        iteradorParticulas--;
+                        const lado_generado = Math.random() < 0.5 ? 'x' : 'y';
+                        let x_lado, y_lado, nuevo_x, nuevo_y;
+                        if (lado_generado === 'x') {
+                            x_lado = Math.random() < 0.5 ? 'r' : 'l';
+                            if (x_lado === 'l') {
+                                nuevo_x = this.contenedor.offsetLeft - this.distanciaMaximaConexiones/3;
+                            } else {
+                                nuevo_x = this.contenedor.offsetLeft + this.contenedor.width + this.distanciaMaximaConexiones/3;
+                            }
+                            nuevo_y = Math.random() * this.contenedor.height;
                         } else {
-                            nuevo_x = this.contenedor.offsetLeft + this.contenedor.width + this.distanciaMaximaConexiones/3;
+                            y_lado = Math.random() < 0.5 ? 't' : 'b';
+                            if (y_lado === 't') {
+                                nuevo_y = this.contenedor.offsetTop - this.distanciaMaximaConexiones/3;
+                            } else {
+                                nuevo_y = this.contenedor.offsetTop + this.contenedor.height + this.distanciaMaximaConexiones/3;
+                            }
+                            nuevo_x = Math.random() * this.contenedor.width;
                         }
-                        nuevo_y = Math.random() * this.contenedor.height;
-                    } else {
-                        y_lado = Math.random() < 0.5 ? 't' : 'b';
-                        if (y_lado === 't') {
-                            nuevo_y = this.contenedor.offsetTop - this.distanciaMaximaConexiones/3;
-                        } else {
-                            nuevo_y = this.contenedor.offsetTop + this.contenedor.height + this.distanciaMaximaConexiones/3;
-                        }
-                        nuevo_x = Math.random() * this.contenedor.width;
+                        this.crearParticula(nuevo_x, nuevo_y);
                     }
-                    this.crearParticula(nuevo_x, nuevo_y);
+                } else {
+                        this.crearParticula();
                 }
             }
         }
