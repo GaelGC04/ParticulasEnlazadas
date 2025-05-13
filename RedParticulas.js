@@ -1,7 +1,6 @@
 import Particula from './Particula.js';
 
-// TODO particulas al hacer click
-// TODO mouse con enlaces a particulas en el for
+// hacer que las particulas se generen en las esquinas y no en el centro
 class RedParticulas {
     constructor(contenedor, velocidadMaxima, nParticulas, crearParticulaOnClick, mouseActivo, mouseParticula, distanciaMouse, distanciaMaximaConexiones, distanciaMouseConexiones, anchoLinea, colorFondo, colorConexiones, tamanioParticulas, tamanioMinimoParticulas, colores) {
         this.contenedor = contenedor;
@@ -77,6 +76,9 @@ class RedParticulas {
         // Limpiar canvas con un alpha para efecto de rastro
         this.contexto.fillStyle = `rgba(${this.colorFondo})`;
         this.contexto.fillRect(0, 0, this.contenedor.width, this.contenedor.height);
+
+        // Dibujar conexiones entre partículas
+        this.dibujarConexiones();
         
         // Actualizar y dibujar partículas
         for (let iteradorParticulas = 0; iteradorParticulas < this.particulas.length; iteradorParticulas++) {
@@ -90,18 +92,37 @@ class RedParticulas {
             );
             
             // Si la partícula sale del contenedor se elimina y se crea una nueva
-            if (this.particulas[iteradorParticulas].x < -this.distanciaMaximaConexiones/2 ||
-                this.particulas[iteradorParticulas].x > this.contenedor.width + this.distanciaMaximaConexiones/2 ||
-                this.particulas[iteradorParticulas].y < -this.distanciaMaximaConexiones/2 ||
-                this.particulas[iteradorParticulas].y > this.contenedor.height + this.distanciaMaximaConexiones/2) {
+            if (this.particulas[iteradorParticulas].x < this.contenedor.offsetLeft -this.distanciaMaximaConexiones/2 ||
+                this.particulas[iteradorParticulas].x > this.contenedor.offsetLeft + this.contenedor.width + this.distanciaMaximaConexiones/2 ||
+                this.particulas[iteradorParticulas].y < this.contenedor.offsetTop -this.distanciaMaximaConexiones/2 ||
+                this.particulas[iteradorParticulas].y > this.contenedor.offsetTop + this.contenedor.height + this.distanciaMaximaConexiones/2) {
                 this.particulas.splice(iteradorParticulas, 1);
-                iteradorParticulas--;
-                this.crearParticula();
+
+                if (this.particulas.length < this.nParticulas) {
+                    iteradorParticulas--;
+                    const lado_generado = Math.random() < 0.5 ? 'x' : 'y';
+                    let x_lado, y_lado, nuevo_x, nuevo_y;
+                    if (lado_generado === 'x') {
+                        x_lado = Math.random() < 0.5 ? 'r' : 'l';
+                        if (x_lado === 'l') {
+                            nuevo_x = this.contenedor.offsetLeft - this.distanciaMaximaConexiones/3;
+                        } else {
+                            nuevo_x = this.contenedor.offsetLeft + this.contenedor.width + this.distanciaMaximaConexiones/3;
+                        }
+                        nuevo_y = Math.random() * this.contenedor.height;
+                    } else {
+                        y_lado = Math.random() < 0.5 ? 't' : 'b';
+                        if (y_lado === 't') {
+                            nuevo_y = this.contenedor.offsetTop - this.distanciaMaximaConexiones/3;
+                        } else {
+                            nuevo_y = this.contenedor.offsetTop + this.contenedor.height + this.distanciaMaximaConexiones/3;
+                        }
+                        nuevo_x = Math.random() * this.contenedor.width;
+                    }
+                    this.crearParticula(nuevo_x, nuevo_y);
+                }
             }
         }
-
-        // Dibujar conexiones entre partículas
-        this.dibujarConexiones();
     }
 
     dibujarConexiones() {

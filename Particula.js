@@ -37,17 +37,17 @@ class Particula {
             if (mouse.x && mouse.y) {
                 const dx = this.x - mouse.x;
                 const dy = this.y - mouse.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distancia = Math.sqrt(dx * dx + dy * dy);
                 
-                if (distance < distanciaMouse) {
-                    const forceDirection = {
-                        x: dx / distance,
-                        y: dy / distance
+                if (distancia < distanciaMouse) {
+                    const direccionFuerza = {
+                        x: dx / distancia,
+                        y: dy / distancia
                     };
-                    const force = (distanciaMouse - distance) / 50;
+                    const force = (distanciaMouse - distancia) / 50;
                     
-                    this.velocidad.x += forceDirection.x * force;
-                    this.velocidad.y += forceDirection.y * force;
+                    this.velocidad.x += direccionFuerza.x * force;
+                    this.velocidad.y += direccionFuerza.y * force;
                 }
             }
         }
