@@ -1,5 +1,5 @@
 # Partículas enlazadas
-Versión mejorada de NodosUnidos
+Versión mejorada de NodosUniones
 Se puede usar en web apps como fondos dinámicos
 
 ## Pasos:
