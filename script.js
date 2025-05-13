@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const velocidadMaxima = 0.5;
     const nParticulas = 800;
     const generarParticulasFuera = false;
-    const crearParticulaOnClick = false;
+    const crearParticulaOnClick = true;
     const mouseActivo = true;
     const mouseParticula = true;
     const distanciaMouse = 150;
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const colorConexiones = '255, 255, 255';
     const tamanioParticulas = 4;
     const friccion = 0.95;
-    const fuerzaRepulsion = 1;
+    const fuerzaRepulsion = 0.1;
     const tamanioMinimoParticulas = 0.5;
     const colores = ['#4CBBFC', '#4CFCB1', '#FC4C4C', '#FCFC4C', '#FC4CFC'];
     let rp = new RedParticulas(
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     document.addEventListener('click', (e) => {
-        if (rp) {
+        if (rp && rp.crearParticulaOnClick == true) {
             rp.crearParticula(e.clientX, e.clientY);
         }
     });
